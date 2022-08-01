@@ -10,7 +10,8 @@ typedef struct  s_p
     int                 p_id;
     int                 p_left_id;
     int                 p_right_id;
-    int                 last_eat;
+    long long                 last_eat;
+    int                 deneme;
     struct  s_r                 *rule;
     pthread_t			thread_id;
 }   t_p;

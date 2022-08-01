@@ -6,7 +6,7 @@
 /*   By: akocoglu <akocoglu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/30 15:47:32 by akocoglu          #+#    #+#             */
-/*   Updated: 2022/07/30 20:15:56 by akocoglu         ###   ########.fr       */
+/*   Updated: 2022/08/01 16:59:58 by akocoglu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,27 @@ void	mutex_init(t_r *rule)
 	int i;
 
 	i = rule->num_philo;
-	while(i >= 0)
+	while(--i >= 0)
 	{
-		pthread_mutex_init(&(rule->forks[i]), NULL);
-		i--;	
+		pthread_mutex_init(&(rule->forks[i]), NULL);	
 	}
 	pthread_mutex_init(&(rule->writing), NULL);
 	pthread_mutex_init(&(rule->meal_check), NULL);
-	}
+}
 
 void	philo_init(t_r *rule)
 {
 	int i;
 
-	i = rule->num_philo - 1;
-	while (i >= 0)
+	i = rule->num_philo;
+	while (--i >= 0)
 	{
 		rule->philo[i].p_id = i;
 		rule->philo[i].p_left_id = i;
 		rule->philo[i].p_right_id = (i + 1) % rule->num_philo;
 		rule->philo[i].rule = rule;
 		rule->philo[i].last_eat = 0;
-		i--;
+		rule->philo[i].deneme = 2323;
 	}
 }
 
@@ -62,11 +61,10 @@ void ft_printf(t_r *rule, int id, char *str)
 	if(!(rule->dieded))
 	{
 		printf("%lli ",  (start_time() - rule->first_time));
-		printf(" %i ", id + 1);
-		printf(" %s\n", str);		
+		printf("%i ", id + 1);
+		printf("%s\n", str);		
 	}
 	pthread_mutex_unlock(&(rule->writing));
-	return ;
 }
 
 void	timing(long long time, t_r *rule)
@@ -78,7 +76,7 @@ void	timing(long long time, t_r *rule)
 	{
 		if(calculate_time(t, start_time()) >= time) // süreyi geçiriyorum. start_time() artıyor.
 		{
-				break;
+			break;
 		}
 		usleep(50);
 	}
@@ -89,13 +87,12 @@ void check_death(t_r *r, t_p *phil)
 	int	i;
 
 	i = -1;
-
 	while(++i < r->num_philo && !(r->dieded))
 	{
 		pthread_mutex_lock(&(r->meal_check));
-		if (calculate_time(phil->last_eat, start_time()) > r->time_sleep)
+		if (calculate_time(phil[i].last_eat, start_time()) > r->time_death)
 		{
-			ft_printf(r, phil->p_id, "is died");
+			ft_printf(r, i, "is died");
 			r->dieded = 1;
 		}
 		pthread_mutex_unlock(&(r->meal_check));
@@ -103,8 +100,11 @@ void check_death(t_r *r, t_p *phil)
 	}
 }
 
-void	eats(t_p *phil, t_r *rules)
+void	eats(t_p *phil)
 {
+	t_r *rules;
+	
+	rules = phil->rule;
 	pthread_mutex_lock(&(rules->forks[phil->p_left_id]));
 	ft_printf(rules, phil->p_id, "has taken a fork");
 	pthread_mutex_lock(&(rules->forks[phil->p_right_id]));
@@ -121,17 +121,22 @@ void	eats(t_p *phil, t_r *rules)
 
 void *rule_threads(void *philos)
 {
+	int	i;
 	t_r *rules;
 	t_p *phil;
 
+	i = 0;
 	phil = (t_p *)philos;
 	rules = phil->rule;
+	if (phil->p_id % 2)
+		usleep(15000);
 	while(!(rules->dieded))
 	{
-		eats(phil, rules);
+		eats(phil);
 		ft_printf(rules, phil->p_id, "is sleeping");
 		timing(rules->time_sleep, rules);
 		ft_printf(rules, phil->p_id, "is thinking");
+		i++;
 	}
 	return (NULL);	
 }
@@ -155,15 +160,15 @@ void	create_thread(t_r *rule)
 	t_p *phil;
 
 	i = 0;
-	
 	phil = rule->philo;
 	rule->first_time = start_time();
 	while (i < rule->num_philo)
 	{
 		pthread_create(&(phil[i].thread_id), NULL, rule_threads, &(phil[i]));
 		phil[i].last_eat = start_time();
+		i++;
 	}
-	check_death(rule, phil);
+	check_death(rule, rule->philo);
 	exit_thread(rule, phil);
 }
 
