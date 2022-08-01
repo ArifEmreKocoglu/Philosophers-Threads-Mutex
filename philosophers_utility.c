@@ -6,9 +6,11 @@
 /*   By: akocoglu <akocoglu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/30 15:46:26 by akocoglu          #+#    #+#             */
-/*   Updated: 2022/07/30 15:47:24 by akocoglu         ###   ########.fr       */
+/*   Updated: 2022/08/01 17:44:49 by akocoglu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "philo.h"
 
 int	cntrl(int nptr)
 {

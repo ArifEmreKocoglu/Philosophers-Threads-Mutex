@@ -12,6 +12,7 @@ typedef struct  s_p
     int                 p_right_id;
     long long                 last_eat;
     int                 deneme;
+    int                 x_meal;
     struct  s_r                 *rule;
     pthread_t			thread_id;
 }   t_p;
@@ -24,6 +25,8 @@ typedef struct			s_r
 	int					time_sleep;
     int                 dieded;
     long long           first_time;
+    int                 temp_eat;
+    int                 argv_eat;
     pthread_mutex_t		forks[250];
     pthread_mutex_t		meal_check;
 	pthread_mutex_t		writing;
