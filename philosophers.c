@@ -6,7 +6,7 @@
 /*   By: akocoglu <akocoglu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/30 15:47:32 by akocoglu          #+#    #+#             */
-/*   Updated: 2022/08/01 17:47:46 by akocoglu         ###   ########.fr       */
+/*   Updated: 2022/08/06 15:08:11 by akocoglu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ void check_death(t_r *r, t_p *phil)
 {
 	int i;
 
-	i = -1;
 	while (!(r->temp_eat))
 	{
+		i = -1;
 		while (++i < r->num_philo && !(r->dieded))
 		{
 			pthread_mutex_lock(&(r->meal_check));
@@ -106,10 +106,10 @@ void check_death(t_r *r, t_p *phil)
 		if (r->dieded)
 			break;
 		i = 0;
-		while(i < r->num_philo && phil->x_meal >= r->argv_eat && r->argv_eat != -1)
-			i++;
-		if (r->argv_eat == i)
-			r->temp_eat = 1;
+		while(i < r->num_philo && phil[i].x_meal >= r->argv_eat && r->argv_eat != -1)
+			i++;	
+		if (r->num_philo == i)
+			r->temp_eat = 1;	
 	}
 }
 
@@ -124,10 +124,10 @@ void eats(t_p *phil)
 	ft_printf(rules, phil->p_id, "has taken a fork");
 	pthread_mutex_lock(&(rules->meal_check));
 	ft_printf(rules, phil->p_id, "is eating");
-	phil->x_meal++;
 	phil->last_eat = start_time();
 	pthread_mutex_unlock(&(rules->meal_check));
 	timing(rules->time_eat, rules);
+	(phil->x_meal)++;
 	pthread_mutex_unlock(&(rules->forks[phil->p_left_id]));
 	pthread_mutex_unlock(&(rules->forks[phil->p_right_id]));
 }
@@ -145,9 +145,9 @@ void *rule_threads(void *philos)
 		usleep(15000);
 	while (!(rules->dieded))
 	{
+		eats(phil);
 		if (rules->temp_eat)
 			break;
-		eats(phil);
 		ft_printf(rules, phil->p_id, "is sleeping");
 		timing(rules->time_sleep, rules);
 		ft_printf(rules, phil->p_id, "is thinking");
