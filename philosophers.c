@@ -6,7 +6,7 @@
 /*   By: akocoglu <akocoglu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/30 15:47:32 by akocoglu          #+#    #+#             */
-/*   Updated: 2022/08/06 15:08:11 by akocoglu         ###   ########.fr       */
+/*   Updated: 2022/09/15 18:50:20 by akocoglu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void philo_init(t_r *rule)
 
 long long start_time(void)
 {
-	struct timeval t; // mikrosaniye türünde işlemci başlanguç süresi ni tutan değişken tanımlar.
+	struct	timeval t; // mikrosaniye türünde işlemci başlanguç süresi ni tutan değişken tanımlar.
 
 	gettimeofday(&t, NULL);							 // geçen süreyi mikrosaniye olarak atar. değişkene
 	return ((t.tv_sec * 1000) + (t.tv_usec / 1000)); // 2. parametre nanosaniyeye dönüştü.
@@ -77,7 +77,7 @@ void timing(long long time, t_r *rule)
 	t = start_time();
 	while (!(rule->dieded))
 	{
-		if (calculate_time(t, start_time()) >= time) // süreyi geçiriyorum. start_time() artıyor.
+		if	(calculate_time(t, start_time()) >= time) // süreyi geçiriyorum. start_time() artıyor.
 		{
 			break;
 		}
@@ -134,9 +134,9 @@ void eats(t_p *phil)
 
 void *rule_threads(void *philos)
 {
-	int i;
-	t_r *rules;
-	t_p *phil;
+	int	i;
+	t_r	*rules;
+	t_p	*phil;
 
 	i = 0;
 	phil = (t_p *)philos;
@@ -147,7 +147,7 @@ void *rule_threads(void *philos)
 	{
 		eats(phil);
 		if (rules->temp_eat)
-			break;
+			break ;
 		ft_printf(rules, phil->p_id, "is sleeping");
 		timing(rules->time_sleep, rules);
 		ft_printf(rules, phil->p_id, "is thinking");
@@ -158,11 +158,15 @@ void *rule_threads(void *philos)
 
 void exit_thread(t_r *rule, t_p *phil)
 {
-	int i;
-
+	int	i;
 	i = -1;
 	while (++i < rule->num_philo)
+	{
+		if (rule->num_philo == 1)
+			break;
 		pthread_join(phil[i].thread_id, NULL);
+	}
+		
 	i = -1;
 	while (++i < rule->num_philo)
 		pthread_mutex_destroy(&(rule->forks[i]));
@@ -171,8 +175,8 @@ void exit_thread(t_r *rule, t_p *phil)
 
 int create_thread(t_r *rule)
 {
-	int i;
-	t_p *phil;
+	int	i;
+	t_p	*phil;
 
 	i = 0;
 	phil = rule->philo;
@@ -191,7 +195,7 @@ int create_thread(t_r *rule)
 
 int main(int argc, char **argv)
 {
-	t_r *rule;
+	t_r	*rule;
 
 	if (argc != 5 && argc != 6)
 		return (0);
@@ -202,7 +206,7 @@ int main(int argc, char **argv)
 	rule->time_sleep = ft_atoi(argv[4]);
 	rule->dieded = 0;
 	rule->temp_eat = 0;
-	if (rule->num_philo < 2 || rule->time_death < 0 || rule->time_eat < 0
+	if (rule->num_philo < 1 || rule->time_death < 0 || rule->time_eat < 0
 		|| rule->time_sleep < 0 || rule->num_philo > 250)
 		return (0);
 	if (argv[5])
