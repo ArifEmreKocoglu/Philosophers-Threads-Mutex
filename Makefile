@@ -2,13 +2,17 @@ SRCS	= philosophers.c
 
 SRCS	+= philosophers_utility.c
 
+SRCS	+= philosophers_tools.c 
+
+SRCS	+= error_manager.c   
+
 OBJS	= $(SRCS:.c=.o)
 
 NAME	= philo
 
 CLANG	= clang
 
-FLAGS	= -Wall -Wextra -Werror
+FLAGS	= -Wall -Wextra -Werror  #-fsanitize=thread -g
 
 INCLUDE	= -lpthread
 

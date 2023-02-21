@@ -6,7 +6,7 @@
 /*   By: akocoglu <akocoglu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/30 15:46:26 by akocoglu          #+#    #+#             */
-/*   Updated: 2022/08/01 17:44:49 by akocoglu         ###   ########.fr       */
+/*   Updated: 2022/09/17 16:11:32 by akocoglu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,37 @@ int	ft_atoi(const char *nptr)
 			return (0);
 	}
 	return (result * ((a * -2) + 1));
+}
+
+long long	start_time(void)
+{
+	struct timeval	t;
+
+	gettimeofday(&t, NULL);
+	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
+}
+
+long long	calculate_time(long long first, long long second)
+{
+	return (second - first);
+}
+
+void	timing(long long time, t_r *rule)
+{
+	long long	t;
+
+	t = start_time();
+	while (1)
+	{
+		pthread_mutex_lock(&(rule->lock));
+		if (rule->dieded)
+		{
+			pthread_mutex_unlock(&(rule->lock));
+			break ;
+		}
+		pthread_mutex_unlock(&(rule->lock));
+		if (calculate_time(t, start_time()) >= time)
+			break ;
+		usleep(130);
+	}
 }
